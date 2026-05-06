@@ -1,0 +1,40 @@
+# Run from this directory so the data volume resolves to ./data alongside this file:
+#   cd docker/postgresql && docker compose up -d
+#
+# Data is persisted on the host at docker/postgresql/data/ (gitignored).
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: disciple-tools-v2-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-dtv2}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dtv2_dev_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-dtv2}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:4
+    container_name: disciple-tools-v2-adminer
+    restart: unless-stopped
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    environment:
+      # Hostname on the Compose network pointing at the postgres service.
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy

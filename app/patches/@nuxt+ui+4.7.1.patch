@@ -1,0 +1,18 @@
+diff --git a/node_modules/@nuxt/ui/dist/runtime/plugins/colors.js b/node_modules/@nuxt/ui/dist/runtime/plugins/colors.js
+index cbac3c6..34a51cf 100644
+--- a/node_modules/@nuxt/ui/dist/runtime/plugins/colors.js
++++ b/node_modules/@nuxt/ui/dist/runtime/plugins/colors.js
+@@ -45,9 +45,9 @@ export default defineNuxtPlugin(() => {
+     style.innerHTML = root.value;
+     style.setAttribute("data-nuxt-ui-colors", "");
+     document.head.appendChild(style);
+-    headData.script = [{
+-      innerHTML: "document.head.removeChild(document.querySelector('[data-nuxt-ui-colors]'))"
+-    }];
++    return;
+   }
+-  useHead(headData);
++  nuxtApp.runWithContext(() => {
++    useHead(headData);
++  });
+ });
