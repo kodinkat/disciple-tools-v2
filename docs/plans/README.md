@@ -9,6 +9,9 @@ This folder is the **canonical place to track implementation and delivery plans*
 | [Master roadmap](./master-roadmap.md) | Phased delivery from blueprint scaffold through migration; decisions, risks, v1 parity goals. |
 | [Roles & permissions matrix](./roles-and-permissions-matrix.md) | Role × permission reference; UI surfaces (toolbar, admin); links to code and ADR 0002. |
 | [Phase 02 execution checklist](./phase-02-execution-checklist.md) | Sequenced tasks for domain model, storage (ADR 0001), APIs, RBAC, shell sidebar. |
+| [Phase 03 execution checklist](./phase-03-execution-checklist.md) | List API extensions, hubs, QA for listing and queries. |
+| [Phase 04 execution checklist](./phase-04-execution-checklist.md) | Detail/layout APIs, web components, QA, **completion report** (§ E). |
+| [Phase 03 list query contract](./phase-03-list-query-contract.md) | `GET /api/records/:typeKey` query params (`sort`, `q`, `filters`, pagination). |
 | [Extensibility (Layers + hooks)](./extensibility-nuxt-layers-and-hooks.md) | Build-time Layers vs runtime hook registry; Mermaid diagrams; WP parity notes. |
 | [Local PostgreSQL (Docker)](./local-postgresql-docker.md) | Compose layout, `./data` volume persistence, env vars, app `DATABASE_URL`. |
 

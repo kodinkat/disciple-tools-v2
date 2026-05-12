@@ -15,6 +15,7 @@
 - [ ] Migration runbooks.
 - [ ] Parity checklist (link from Phase 0 matrix); keep [Parity appendix](#parity-appendix) updated as v2 endpoints and hook names land.
 - [ ] Contract test matrix derived from the REST table below.
+- [ ] **Completion report** — `docs/reports/YYMMDDHHMM-phase-05-completion-summary.md` (same naming pattern as [Phase 03](../reports/2605121430-phase-03-completion-summary.md)).
 
 ## Dependencies
 

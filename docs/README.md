@@ -14,7 +14,7 @@ Entry point for planning, architecture, phased delivery, and recorded decisions.
 | Local Postgres (Docker) | [plans/local-postgresql-docker.md](plans/local-postgresql-docker.md) |
 | Extensibility (layers + hooks) | [plans/extensibility-nuxt-layers-and-hooks.md](plans/extensibility-nuxt-layers-and-hooks.md) |
 | Phase execution playbooks | [phases/](phases/) |
-| Executive / milestone snapshots | [reports/](reports/) — e.g. [Phase 02 completion](reports/2605061430-phase-02-completion-summary.md) |
+| Executive / milestone snapshots | [reports/](reports/) — e.g. [Phase 02 completion](reports/2605061430-phase-02-completion-summary.md), [Phase 03 completion](reports/2605121430-phase-03-completion-summary.md) |
 | Architecture decisions | [adr/](adr/) |
 | System context (when expanded) | [architecture.md](architecture.md) |
 

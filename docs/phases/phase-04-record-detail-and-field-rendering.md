@@ -1,7 +1,8 @@
 # Phase 4 — Record detail: tiles, sections, web components
 
 > **Status**: Stub — expand during execution  
-> **Parent plan**: [Master roadmap](../plans/master-roadmap.md)
+> **Parent plan**: [Master roadmap](../plans/master-roadmap.md)  
+> **Execution checklist**: [phase-04 execution checklist](../plans/phase-04-execution-checklist.md) · **completion report**: `docs/reports/YYMMDDHHMM-phase-04-completion-summary.md` (gate in checklist **§ E**)
 
 ## Objectives
 
@@ -14,6 +15,7 @@
 
 - [ ] Detail route + renderer.
 - [ ] Storybook or kitchen-sink integration for regression on field components.
+- [ ] **Completion report** — `docs/reports/YYMMDDHHMM-phase-04-completion-summary.md`; gate in [Phase 04 execution checklist § E](../plans/phase-04-execution-checklist.md).
 
 ## Dependencies
 

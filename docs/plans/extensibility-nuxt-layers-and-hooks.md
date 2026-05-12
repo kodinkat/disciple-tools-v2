@@ -98,7 +98,7 @@ Nuxt/Vue itself exposes **lifecycle hooks** and **nitro.hooks** — useful for i
 |-------|---------------------|
 | 1 | Consider early `layers/` layout; optional `extends` from internal packages later. |
 | 2 | Introduce hook points on record/schema lifecycle **after** hook ADR drafted. |
-| 3 | List pipeline hooks (`beforeQuery`, `afterResults`) optional. |
+| 3 | List pipeline hooks: **`runBeforeList`** / **`runAfterList`** in `server/utils/record-hooks.ts` (optional; wired on `GET /api/records/:typeKey`). |
 | 4 | UI extension via layers + small client registries where safe. |
 | 5 | Map v1 `apply_filters(`…`)` call sites → v2 hook names for migration tooling. |
 
