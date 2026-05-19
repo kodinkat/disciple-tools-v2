@@ -26,7 +26,7 @@ Phase **03** delivers **per-type listing and query behaviour** aligned with the 
 | **Hooks** | `registerRecordBeforeList` / `registerRecordAfterList`, `runBeforeList` / `runAfterList` in `server/utils/record-hooks.ts`; list handler reapplies **`sanitizeListingBounds`** and **coerces filters** again after hooks. ISO timestamps on list rows for stable JSON. |
 | **Quality** | `tests/unit/record-list-query.spec.ts`; `tests/unit/record-hooks.spec.ts` (incl. list hooks); `sanitizeListingBounds` tests; **`resetRecordHooksForTests`** for isolation. |
 | **Hub UI** | `RecordTypeHub.vue`: **`UTable`**, **`UPagination`**, search, **`useFetch`** **`refresh`** after create, row **`navigateTo`** detail routes. Create **`UModal`** (name required; optional contact nickname); RBAC **`records.*.create`**. |
-| **Interim detail** | `RecordReadonlyDetail.vue`; routes **`/contacts/[id]`**, **`/groups/[id]`**; **`GET /api/records/:typeKey/:id`** (unchanged Phase 02 surface). |
+| **Interim detail** | `RecordReadonlyDetail.vue` (later replaced by **`RecordDetail.vue`** in Phase 04); routes **`/contacts/[id]`**, **`/groups/[id]`**; **`GET /api/records/:typeKey/:id`** (Phase 02 surface). |
 | **Deferred (documented)** | Cross-type unified list; cursor pagination; search index ADR (Postgres **`ILIKE`** acceptable for this phase). |
 
 ---
@@ -52,6 +52,8 @@ Phase **03** delivers **per-type listing and query behaviour** aligned with the 
 1. **Detail schema API** (“`post_settings`-like”) for sections, tiles, and edit/read flags (per [phase-04 playbook](../phases/phase-04-record-detail-and-field-rendering.md)).  
 2. **Field-type → component map** with **SSR-safe** Lit registration boundaries.  
 3. Replace interim **JSON grid** detail with **configured** layouts where appropriate.
+
+**Update (Phase 04 snapshot [`2605121533`](./2605121533-phase-04-completion-summary.md))**: detail **`GET`** envelope, **`dt-*`** rendering, **`PATCH`** save path, and QA playbook shipped; optional Storybook/kitchen-sink remains open per Phase 04 playbook.
 
 ---
 

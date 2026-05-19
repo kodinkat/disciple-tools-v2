@@ -12,6 +12,7 @@ This folder is the **canonical place to track implementation and delivery plans*
 | [Phase 03 execution checklist](./phase-03-execution-checklist.md) | List API extensions, hubs, QA for listing and queries. |
 | [Phase 04 execution checklist](./phase-04-execution-checklist.md) | Detail/layout APIs, web components, QA, **completion report** (§ E). |
 | [Phase 03 list query contract](./phase-03-list-query-contract.md) | `GET /api/records/:typeKey` query params (`sort`, `q`, `filters`, pagination). |
+| [Phase 04 detail view contract](./phase-04-detail-view-contract.md) | **`GET /api/records/:typeKey/:id`** response `detail` envelope (`layout`, `fields`). |
 | [Extensibility (Layers + hooks)](./extensibility-nuxt-layers-and-hooks.md) | Build-time Layers vs runtime hook registry; Mermaid diagrams; WP parity notes. |
 | [Local PostgreSQL (Docker)](./local-postgresql-docker.md) | Compose layout, `./data` volume persistence, env vars, app `DATABASE_URL`. |
 

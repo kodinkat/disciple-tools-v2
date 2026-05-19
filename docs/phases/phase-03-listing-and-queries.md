@@ -85,7 +85,7 @@ Execute in **local dev** (`nuxt dev` + app database migrated and seeded enough t
 ### Search and create smoke
 
 1. **Search:** filter list with a substring that matches a known name.
-2. **Row → detail:** click a row; confirm **`/contacts/:id`** or **`/groups/:id`** loads **read-only** detail.
+2. **Row → detail:** click a row; confirm **`/contacts/:id`** or **`/groups/:id`** loads detail (**editable** when **`records.*.write`** is granted; otherwise **read-only** — Phase&nbsp;04).
 3. **Create:** use **New contact / group**; submit with name only (optional nickname on contacts); confirm toast, navigation to detail, **`overall_status`** / **`group_type`** defaulted on read-only detail, and hub **refresh** reflects the new row when returning to list.
 
 ### Safari vs Firefox baseline

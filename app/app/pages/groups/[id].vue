@@ -8,7 +8,7 @@ const recordId = computed(() => String(route.params.id ?? ''))
 </script>
 
 <template>
-  <RecordReadonlyDetail
+  <RecordDetail
     type-key="groups"
     :record-id="recordId"
     list-href="/groups"

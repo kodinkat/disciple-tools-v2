@@ -1,6 +1,11 @@
 import { requireRecordVerb } from '../../../utils/records-rbac'
 import { db } from '../../../utils/database'
-import { assertUuid, getRecordTypeByKey } from '../../../utils/record-mutations'
+import {
+  assertUuid,
+  getRecordTypeByKey,
+  loadFieldsForType
+} from '../../../utils/record-mutations'
+import { buildRecordDetailPayload } from '../../../utils/record-detail-payload'
 
 export default defineEventHandler(async (event) => {
   const typeKey = getRouterParam(event, 'typeKey')
@@ -32,6 +37,11 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Record not found' })
   }
 
+  const data = row.data as Record<string, unknown>
+
+  const fieldRows = await loadFieldsForType(typeRow.id)
+  const detail = buildRecordDetailPayload(fieldRows, data)
+
   return {
     record: {
       id: row.id,
@@ -39,7 +49,8 @@ export default defineEventHandler(async (event) => {
       created_at: row.created_at,
       updated_at: row.updated_at,
       created_by: row.created_by,
-      data: row.data,
+      data
     },
+    detail
   }
 })

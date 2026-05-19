@@ -1,9 +1,28 @@
+import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 // Resolve a single vue entry for the bundler (duplicate copies → currentRenderingInstance / renderSlot crashes).
 const appDir = dirname(fileURLToPath(import.meta.url))
+
+/** `@disciple.tools/web-components` ships source with `export const version = __LIB_VERSION__` (library build injects this). */
+function discipleToolsWebComponentsVersion(): string {
+  try {
+    const pkgPath = resolve(appDir, 'node_modules/@disciple.tools/web-components/package.json')
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf8')) as { version?: string }
+    return pkg.version ?? '0.0.0'
+  } catch {
+    return '0.0.0'
+  }
+}
+
+const discipleToolsWebComponentsLibVersion = discipleToolsWebComponentsVersion()
 const vueEsmBundler = resolve(appDir, 'node_modules/vue/dist/vue.esm-bundler.js')
+/** Published tarball does not include `components.css`; `light.css` sets global `dt-*` variables on `html`. */
+const dtWebComponentsLightCss = resolve(
+  appDir,
+  'node_modules/@disciple.tools/web-components/src/styles/light.css'
+)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -26,7 +45,7 @@ export default defineNuxtConfig({
     }
   },
 
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css', dtWebComponentsLightCss],
 
   ui: {
     theme: {
@@ -58,7 +77,7 @@ export default defineNuxtConfig({
 
   // See https://github.com/nuxt/ui/issues/2622 — keep Reka on the same transpile path as the app.
   build: {
-    transpile: ['vue', 'reka-ui']
+    transpile: ['vue', 'reka-ui', '@disciple.tools/web-components', 'lit']
   },
 
   // Off: Vite Environment API can split client graphs and trigger duplicate-Vue / renderSlot (.ce) crashes.
@@ -71,6 +90,9 @@ export default defineNuxtConfig({
 
   // Dedupe + explicit alias; hoistStatic off (pairs with hoisted-vnode ref warnings in some kits).
   vite: {
+    define: {
+      __LIB_VERSION__: JSON.stringify(discipleToolsWebComponentsLibVersion)
+    },
     resolve: {
       alias: {
         vue: vueEsmBundler
