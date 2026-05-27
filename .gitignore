@@ -1,0 +1,14 @@
+# Local PostgreSQL data (Docker bind mount — see docker/postgresql/)
+docker/postgresql/data/
+
+# Local Compose overrides (copy from .env.example)
+docker/postgresql/.env
+
+# Nuxt application (generated / local)
+app/node_modules/
+app/.output/
+app/.nuxt/
+app/.env
+
+# Temporary blueprint checkout (reference only)
+.nuxt-blueprints-ref/

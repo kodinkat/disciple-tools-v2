@@ -1,0 +1,16 @@
+{
+  "source": "https://github.com/corsacca/nuxt-blueprints",
+  "generated": "2026-05-05",
+  "blocks": [
+    "core",
+    "email/mailgun",
+    "email/shared",
+    "activity-log",
+    "rate-limiting/db",
+    "auth-jwt",
+    "admin",
+    "user-management",
+    "s3-storage",
+    "kitchen-sink"
+  ]
+}
