@@ -95,3 +95,5 @@ If v1 **field keys** remain identical in JSON, note that explicitly in an ADR; i
 - v1: `docs/dt-posts-api-reference.md` (disciple-tools-theme)
 - v1 list queries: `docs/dt-posts-list-query.md`
 - v1 field settings: `docs/dt-posts-field-settings.md`
+- **[ADR 0003](../adr/0003-satellite-storage-for-complex-field-values.md)** — instance values for complex kinds (`record_field_entries`, `record_connections`)
+- [Admin record schema execution](admin-record-schema-execution.md) — milestones for admin UI + API

@@ -4,7 +4,7 @@ import { db } from '../utils/database'
 
 type MigrationSpec = {
   readonly name: string
-  readonly loader: () => Promise<{ up: Migration['up']; down: Migration['down'] }>
+  readonly loader: () => Promise<{ up: Migration['up'], down: Migration['down'] }>
 }
 
 /**
@@ -19,24 +19,32 @@ type MigrationSpec = {
 const MIGRATION_SPECS: MigrationSpec[] = [
   {
     name: '001_create_users_table',
-    loader: () => import('../../migrations/001_create_users_table'),
+    loader: () => import('../../migrations/001_create_users_table')
   },
   {
     name: '002_create_password_reset_requests_table',
-    loader: () => import('../../migrations/002_create_password_reset_requests_table'),
+    loader: () => import('../../migrations/002_create_password_reset_requests_table')
   },
   {
     name: '003_create_activity_logs_table',
-    loader: () => import('../../migrations/003_create_activity_logs_table'),
+    loader: () => import('../../migrations/003_create_activity_logs_table')
   },
   {
     name: '004_create_record_storage_tables',
-    loader: () => import('../../migrations/004_create_record_storage_tables'),
+    loader: () => import('../../migrations/004_create_record_storage_tables')
   },
   {
     name: '005_seed_contacts_and_groups',
-    loader: () => import('../../migrations/005_seed_contacts_and_groups'),
+    loader: () => import('../../migrations/005_seed_contacts_and_groups')
   },
+  {
+    name: '006_record_satellite_field_storage',
+    loader: () => import('../../migrations/006_record_satellite_field_storage')
+  },
+  {
+    name: '007_record_type_fields_is_system',
+    loader: () => import('../../migrations/007_record_type_fields_is_system')
+  }
 ]
 
 function createBundledMigrationProvider(): MigrationProvider {
@@ -57,7 +65,7 @@ function createBundledMigrationProvider(): MigrationProvider {
         cached[name] = { up: mod.up, down: mod.down }
       }
       return cached
-    },
+    }
   }
 }
 
@@ -70,7 +78,7 @@ export default defineNitroPlugin(async () => {
 
   const migrator = new Migrator({
     db,
-    provider: createBundledMigrationProvider(),
+    provider: createBundledMigrationProvider()
   })
 
   const all = await migrator.getMigrations()
@@ -88,7 +96,7 @@ export default defineNitroPlugin(async () => {
 
   const { error, results } = await migrator.migrateToLatest()
 
-  results?.forEach(r => {
+  results?.forEach((r) => {
     if (r.status === 'Success') console.log(`✓ ${r.migrationName}`)
     if (r.status === 'Error') console.error(`✗ ${r.migrationName}`)
   })

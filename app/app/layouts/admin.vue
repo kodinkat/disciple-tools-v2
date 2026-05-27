@@ -6,6 +6,7 @@ const mobileOpen = ref(false)
 
 const navItems = computed(() => [
   { to: '/admin', label: 'Dashboard', icon: 'i-lucide-layout-dashboard' },
+  { to: '/admin/record-schema', label: 'Record types', icon: 'i-lucide-layers-2' },
   ...(hasPermission('users.view')
     ? [{ to: '/admin/users', label: 'Users', icon: 'i-lucide-users' }]
     : []),
@@ -47,7 +48,9 @@ watch(() => route.path, () => {
       <!-- Desktop sidebar -->
       <aside class="hidden lg:flex lg:flex-col w-64 min-h-screen border-r border-(--ui-border) bg-(--ui-bg-elevated) sticky top-0 h-screen">
         <div class="px-6 py-5 border-b border-(--ui-border)">
-          <h1 class="text-xl font-semibold">Admin</h1>
+          <h1 class="text-xl font-semibold">
+            Admin
+          </h1>
         </div>
         <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           <NuxtLink
@@ -59,7 +62,10 @@ watch(() => route.path, () => {
               ? 'bg-(--ui-bg-accented) text-(--ui-text) font-medium'
               : 'text-(--ui-text-muted) hover:bg-(--ui-bg-accented) hover:text-(--ui-text)'"
           >
-            <UIcon :name="item.icon" class="size-5 shrink-0" />
+            <UIcon
+              :name="item.icon"
+              class="size-5 shrink-0"
+            />
             <span>{{ item.label }}</span>
           </NuxtLink>
         </nav>
@@ -71,18 +77,27 @@ watch(() => route.path, () => {
             to="/"
             class="flex items-center gap-2 text-sm text-(--ui-text-muted) hover:text-(--ui-text) transition-colors"
           >
-            <UIcon name="i-lucide-arrow-left" class="size-4" />
+            <UIcon
+              name="i-lucide-arrow-left"
+              class="size-4"
+            />
             <span>Back to app</span>
           </NuxtLink>
         </div>
       </aside>
 
       <!-- Mobile drawer -->
-      <USlideover v-model:open="mobileOpen" side="left" :ui="{ content: 'max-w-xs' }">
+      <USlideover
+        v-model:open="mobileOpen"
+        side="left"
+        :ui="{ content: 'max-w-xs' }"
+      >
         <template #content>
           <div class="flex flex-col h-full bg-(--ui-bg-elevated)">
             <div class="px-6 py-5 border-b border-(--ui-border) flex items-center justify-between">
-              <h1 class="text-xl font-semibold">Admin</h1>
+              <h1 class="text-xl font-semibold">
+                Admin
+              </h1>
               <UButton
                 icon="i-lucide-x"
                 variant="ghost"
@@ -101,7 +116,10 @@ watch(() => route.path, () => {
                   ? 'bg-(--ui-bg-accented) text-(--ui-text) font-medium'
                   : 'text-(--ui-text-muted) hover:bg-(--ui-bg-accented) hover:text-(--ui-text)'"
               >
-                <UIcon :name="item.icon" class="size-5 shrink-0" />
+                <UIcon
+                  :name="item.icon"
+                  class="size-5 shrink-0"
+                />
                 <span>{{ item.label }}</span>
               </NuxtLink>
             </nav>
@@ -113,7 +131,10 @@ watch(() => route.path, () => {
                 to="/"
                 class="flex items-center gap-2 text-sm text-(--ui-text-muted) hover:text-(--ui-text) transition-colors"
               >
-                <UIcon name="i-lucide-arrow-left" class="size-4" />
+                <UIcon
+                  name="i-lucide-arrow-left"
+                  class="size-4"
+                />
                 <span>Back to app</span>
               </NuxtLink>
             </div>

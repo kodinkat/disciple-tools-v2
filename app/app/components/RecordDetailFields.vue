@@ -1,5 +1,15 @@
 <script setup lang="ts">
 import type { DetailFieldViewModel } from '~/types/record-detail-payload'
+import {
+  DETAIL_SCALAR_EDITOR_KINDS,
+  booleanChecked,
+  configOptions,
+  connectionChipItems,
+  dateIsoString,
+  multiSelectChipValues,
+  payloadsToMultiTextRows,
+  usersConnectionObjects
+} from '~/utils/record-detail-field-wc'
 
 const props = defineProps<{
   fields: DetailFieldViewModel[]
@@ -11,28 +21,78 @@ const emit = defineEmits<{
   'update:modelValue': [value: Record<string, unknown>]
 }>()
 
-function textValue(fieldKey: string) {
-  const v = props.modelValue[fieldKey]
-  if (v === null || v === undefined) return ''
-  return String(v)
+function fieldInteractive(field: DetailFieldViewModel): boolean {
+  return !!props.editable && DETAIL_SCALAR_EDITOR_KINDS.has(field.kind)
 }
 
-function selectValue(fieldKey: string) {
-  const v = props.modelValue[fieldKey]
-  return v === null || v === undefined ? '' : String(v)
+/** Resolved value for widgets: editable scalars (`text`, `key_select`) read draft; others use server-provided field value. */
+function displayRaw(field: DetailFieldViewModel): unknown {
+  if (DETAIL_SCALAR_EDITOR_KINDS.has(field.kind)) return props.modelValue[field.field_key]
+  return field.value
 }
 
-function mergeKey(key: string, nextRaw: unknown) {
+function textFromRaw(raw: unknown): string {
+  if (raw === null || raw === undefined) return ''
+  return String(raw)
+}
+
+function mergeTyped(key: string, next: unknown) {
   emit('update:modelValue', {
     ...props.modelValue,
-    [key]: typeof nextRaw === 'string' ? nextRaw : String(nextRaw ?? '')
+    [key]: next
   })
 }
 
-function onDtChange(ev: Event, fieldKey: string) {
-  if (!props.editable) return
+function onStringScalarChange(field: DetailFieldViewModel, ev: Event) {
+  if (!fieldInteractive(field)) return
   const ce = ev as CustomEvent<{ newValue?: string }>
-  mergeKey(fieldKey, ce.detail?.newValue ?? '')
+  mergeTyped(field.field_key, ce.detail?.newValue ?? '')
+}
+
+function onNumberScalarChange(field: DetailFieldViewModel, ev: Event) {
+  if (!fieldInteractive(field)) return
+  const ce = ev as CustomEvent<{ newValue?: string }>
+  const raw = ce.detail?.newValue
+  const n = Number(raw)
+  mergeTyped(field.field_key, Number.isFinite(n) ? n : raw ?? '')
+}
+
+function onToggleChange(field: DetailFieldViewModel, ev: Event) {
+  if (!fieldInteractive(field)) return
+  const ce = ev as CustomEvent<{ newValue?: boolean }>
+  mergeTyped(field.field_key, !!ce.detail?.newValue)
+}
+
+function onDateChange(field: DetailFieldViewModel, ev: Event) {
+  if (!fieldInteractive(field)) return
+  const ce = ev as CustomEvent<{ newValue?: number }>
+  const sec = ce.detail?.newValue
+  if (sec === undefined || sec === null || sec === 0) {
+    mergeTyped(field.field_key, '')
+    return
+  }
+  const iso = new Date(sec * 1000).toISOString().slice(0, 10)
+  mergeTyped(field.field_key, iso)
+}
+
+function numberAttr(field: DetailFieldViewModel, key: 'min' | 'max'): number | undefined {
+  const v = field.config[key]
+  return typeof v === 'number' && Number.isFinite(v) ? v : undefined
+}
+
+function userSelectSingle(field: DetailFieldViewModel): boolean {
+  const c = field.config as { multi?: boolean }
+  return c?.multi !== true
+}
+
+/** Prefer admin-config label for connection target ids when present. */
+function connectionDisplayObjects(raw: unknown, field: DetailFieldViewModel): Array<{ id: string, label: string }> {
+  const opts = configOptions(field)
+  const base = connectionChipItems(raw)
+  return base.map((o) => {
+    const fromConfig = opts.find(op => op.id === o.id)
+    return fromConfig ?? o
+  })
 }
 </script>
 
@@ -44,20 +104,101 @@ function onDtChange(ev: Event, fieldKey: string) {
     >
       <dt-text
         v-if="field.kind === 'text'"
-        :disabled="!editable"
+        :disabled="!fieldInteractive(field)"
         :name="field.field_key"
         :label="field.label"
-        :value="textValue(field.field_key)"
-        @change="onDtChange($event, field.field_key)"
+        :value="textFromRaw(displayRaw(field))"
+        @change="onStringScalarChange(field, $event)"
+      />
+      <dt-textarea
+        v-else-if="field.kind === 'textarea'"
+        :disabled="!fieldInteractive(field)"
+        :name="field.field_key"
+        :label="field.label"
+        :value="textFromRaw(displayRaw(field))"
+        @change="onStringScalarChange(field, $event)"
+      />
+      <dt-number
+        v-else-if="field.kind === 'number'"
+        :disabled="!fieldInteractive(field)"
+        :name="field.field_key"
+        :label="field.label"
+        :value="textFromRaw(displayRaw(field))"
+        :min="numberAttr(field, 'min')"
+        :max="numberAttr(field, 'max')"
+        @change="onNumberScalarChange(field, $event)"
+      />
+      <dt-toggle
+        v-else-if="field.kind === 'boolean'"
+        :id="`${field.field_key}-toggle`"
+        :disabled="!fieldInteractive(field)"
+        :name="field.field_key"
+        :label="field.label"
+        :checked="booleanChecked(displayRaw(field))"
+        @change="onToggleChange(field, $event)"
+      />
+      <dt-date
+        v-else-if="field.kind === 'date'"
+        :disabled="!fieldInteractive(field)"
+        :name="field.field_key"
+        :label="field.label"
+        :value="dateIsoString(displayRaw(field))"
+        @change="onDateChange(field, $event)"
       />
       <dt-single-select
         v-else-if="field.kind === 'key_select'"
-        :disabled="!editable"
+        :disabled="!fieldInteractive(field)"
         :name="field.field_key"
         :label="field.label"
-        :value="selectValue(field.field_key)"
+        :value="textFromRaw(displayRaw(field))"
         :options="field.select_options ?? []"
-        @change="onDtChange($event, field.field_key)"
+        @change="onStringScalarChange(field, $event)"
+      />
+      <dt-multi-select
+        v-else-if="field.kind === 'multi_select'"
+        :disabled="!fieldInteractive(field)"
+        :name="field.field_key"
+        :label="field.label"
+        :options="configOptions(field)"
+        :value="multiSelectChipValues(displayRaw(field))"
+      />
+      <dt-tags
+        v-else-if="field.kind === 'tags'"
+        :disabled="!fieldInteractive(field)"
+        :name="field.field_key"
+        :label="field.label"
+        :options="configOptions(field)"
+        :allow-add="false"
+        :value="multiSelectChipValues(displayRaw(field))"
+      />
+      <dt-users-connection
+        v-else-if="field.kind === 'user_select'"
+        :disabled="!fieldInteractive(field)"
+        :name="field.field_key"
+        :label="field.label"
+        :single="userSelectSingle(field)"
+        :options="[]"
+        :value="usersConnectionObjects(displayRaw(field))"
+      />
+      <dt-connection
+        v-else-if="field.kind === 'connection'"
+        :disabled="!fieldInteractive(field)"
+        :name="field.field_key"
+        :label="field.label"
+        :options="configOptions(field)"
+        :value="connectionDisplayObjects(displayRaw(field), field)"
+      />
+      <dt-multi-text
+        v-else-if="
+          field.kind === 'communication_channel'
+            || field.kind === 'link'
+            || field.kind === 'location'
+            || field.kind === 'location_meta'
+        "
+        :disabled="!fieldInteractive(field)"
+        :name="field.field_key"
+        :label="field.label"
+        :value="payloadsToMultiTextRows(displayRaw(field), field.kind)"
       />
       <div
         v-else

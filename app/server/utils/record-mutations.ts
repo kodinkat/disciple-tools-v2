@@ -1,5 +1,9 @@
 import { createError } from 'h3'
 import type { Selectable } from 'kysely'
+import {
+  fieldValuesLiveInConnectionTable,
+  fieldValuesLiveInEntryTable
+} from './record-field-storage'
 import { db } from './database'
 import type { RecordTypeFieldsTable } from '../database/schema'
 
@@ -25,7 +29,7 @@ export async function loadFieldsForType(recordTypeId: string): Promise<RecordTyp
 
 export function applyKeySelectDefaults(
   rows: RecordTypeFieldRow[],
-  data: Record<string, unknown>,
+  data: Record<string, unknown>
 ): Record<string, unknown> {
   const out: Record<string, unknown> = { ...data }
   for (const row of rows) {
@@ -42,9 +46,16 @@ export function applyKeySelectDefaults(
 
 export function assertRequiredFields(
   rows: RecordTypeFieldRow[],
-  data: Record<string, unknown>,
+  data: Record<string, unknown>
 ) {
   for (const row of rows) {
+    if (
+      fieldValuesLiveInEntryTable(row.kind)
+      || fieldValuesLiveInConnectionTable(row.kind)
+    ) {
+      /** ADR 0003: authoritative values live outside `records.data` until PATCH sub-resources ship. */
+      continue
+    }
     const cfg = row.config as { required?: boolean }
     if (!cfg?.required) {
       continue
@@ -57,20 +68,20 @@ export function assertRequiredFields(
     ) {
       throw createError({
         statusCode: 400,
-        statusMessage: `Missing required field: ${row.field_key}`,
+        statusMessage: `Missing required field: ${row.field_key}`
       })
     }
   }
 }
 
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const UUID_RE
+  = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 export function assertUuid(id: string, label = 'id') {
   if (!UUID_RE.test(id)) {
     throw createError({
       statusCode: 400,
-      statusMessage: `Invalid ${label}`,
+      statusMessage: `Invalid ${label}`
     })
   }
 }

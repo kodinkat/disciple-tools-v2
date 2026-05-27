@@ -5,8 +5,9 @@ import {
   assertRequiredFields,
   assertUuid,
   getRecordTypeByKey,
-  loadFieldsForType,
+  loadFieldsForType
 } from '../../../utils/record-mutations'
+import { assertPatchAvoidsSatelliteFieldKeys } from '../../../utils/record-patch-guards'
 import { runPostUpdateFields, runPostUpdated } from '../../../utils/record-hooks'
 import { logUpdate } from '../../../utils/activity-logger'
 
@@ -44,11 +45,12 @@ export default defineEventHandler(async (event) => {
   if (!patch || typeof patch !== 'object' || Array.isArray(patch)) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Request body must include an object `data`',
+      statusMessage: 'Request body must include an object `data`'
     })
   }
 
   const fieldRows = await loadFieldsForType(typeRow.id)
+  assertPatchAvoidsSatelliteFieldKeys(patch as Record<string, unknown>, fieldRows)
   const previousData = { ...(existing.data as Record<string, unknown>) }
   const merged: Record<string, unknown> = { ...previousData, ...patch }
   const data = await runPostUpdateFields(typeKey, merged)
@@ -59,7 +61,7 @@ export default defineEventHandler(async (event) => {
     .updateTable('records')
     .set({
       data: data as Record<string, unknown>,
-      updated_at: now,
+      updated_at: now
     })
     .where('id', '=', id)
     .where('record_type_id', '=', typeRow.id)
@@ -75,7 +77,7 @@ export default defineEventHandler(async (event) => {
     typeKey,
     recordId: id,
     data,
-    previousData,
+    previousData
   })
 
   return {
@@ -83,7 +85,7 @@ export default defineEventHandler(async (event) => {
       id,
       type_key: typeKey,
       updated_at: now,
-      data,
-    },
+      data
+    }
   }
 })

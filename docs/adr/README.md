@@ -8,6 +8,7 @@ This folder records **accepted** architectural decisions for Disciple Tools v2. 
 |----|-------|--------|
 | [0001](0001-record-storage-postgres.md) | Record storage model (PostgreSQL) | Accepted |
 | [0002](0002-rbac-navigation-and-admin-shell.md) | RBAC alignment for navigation & admin shell | Accepted |
+| [0003](0003-satellite-storage-for-complex-field-values.md) | Satellite storage for complex field values (`record_field_entries`, `record_connections`) | Accepted |
 
 ### Expected decisions (titles only — drafts to link from phase playbooks)
 

@@ -70,12 +70,20 @@ const editableFieldKeys = computed(() =>
   ).map(f => f.field_key)
 )
 
+/** Only these kinds participate in PATCH today; overlay `draftData` onto `value` just for these so other kinds stay on server-assembled payloads. */
+const DRAFT_VALUE_OVERLAY_KINDS = new Set(['text', 'key_select'])
+
 function orderedFields(keys: readonly string[]): DetailFieldViewModel[] {
   const map = fieldByKey.value
   const out: DetailFieldViewModel[] = []
   for (const k of keys) {
     const f = map.get(k)
-    if (f) out.push({ ...f, value: draftData.value[k] ?? f.value })
+    if (!f) continue
+    const useDraft = DRAFT_VALUE_OVERLAY_KINDS.has(f.kind)
+    out.push({
+      ...f,
+      value: useDraft ? (draftData.value[k] ?? f.value) : f.value
+    })
   }
   return out
 }

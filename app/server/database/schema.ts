@@ -61,6 +61,8 @@ export interface RecordTypeFieldsTable {
   description: Generated<string>
   field_order: Generated<number>
   config: Generated<Record<string, unknown>>
+  /** Seeded/core definitions cannot be PATCH/DELETE’d (M2). */
+  is_system: Generated<boolean>
 }
 
 export interface RecordsTable {
@@ -72,6 +74,30 @@ export interface RecordsTable {
   data: Generated<Record<string, unknown>>
 }
 
+/** Multi-valued non-relational payloads (ADR 0003). */
+export interface RecordFieldEntriesTable {
+  id: Generated<string>
+  record_id: string
+  field_key: string
+  entry_type: string
+  sort_order: Generated<number>
+  payload: Generated<Record<string, unknown>>
+  created_at: ColumnType<Date, Date | string | undefined, Date | string>
+  updated_at: ColumnType<Date, Date | string | undefined, Date | string>
+}
+
+/** `connection` field edges between two `records` rows (ADR 0003). */
+export interface RecordConnectionsTable {
+  id: Generated<string>
+  record_id: string
+  field_key: string
+  connected_record_id: string
+  sort_order: Generated<number>
+  meta: Generated<Record<string, unknown>>
+  created_at: ColumnType<Date, Date | string | undefined, Date | string>
+  updated_at: ColumnType<Date, Date | string | undefined, Date | string>
+}
+
 export interface Database {
   users: UsersTable
   password_reset_requests: PasswordResetRequestsTable
@@ -79,4 +105,6 @@ export interface Database {
   record_types: RecordTypesTable
   record_type_fields: RecordTypeFieldsTable
   records: RecordsTable
+  record_field_entries: RecordFieldEntriesTable
+  record_connections: RecordConnectionsTable
 }

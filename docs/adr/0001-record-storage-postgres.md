@@ -54,7 +54,7 @@ Field **presence** defaults and **required** rules live primarily in **`record_t
 
 - **Positive**: One migration story for new types; schema evolution via **additive** field rows + optional data migration scripts; aligns with Nitro APIs returning **field schema + payload** blobs for Phase 4 detail UI.
 - **Negative**: Some reporting needs may require generated columns / views; validators must coerce JSON carefully.
-- **Follow-up**: TypeScript/Kysely types for `records.data` may use `unknown`/per-kind inference in services; Phase 03 listing ADR should reference indexing strategy (`jsonb` path vs generated columns vs denormalised sort keys).
+- **Follow-up**: TypeScript/Kysely types for `records.data` may use `unknown`/per-kind inference in services; Phase 03 listing ADR should reference indexing strategy (`jsonb` path vs generated columns vs denormalised sort keys). **Multi-valued / relational kinds** use satellite tables per [ADR 0003](0003-satellite-storage-for-complex-field-values.md).
 
 ## Links
 

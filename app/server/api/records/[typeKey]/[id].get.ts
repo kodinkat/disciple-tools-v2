@@ -40,7 +40,30 @@ export default defineEventHandler(async (event) => {
   const data = row.data as Record<string, unknown>
 
   const fieldRows = await loadFieldsForType(typeRow.id)
-  const detail = buildRecordDetailPayload(fieldRows, data)
+  const [fieldEntries, connections] = await Promise.all([
+    db
+      .selectFrom('record_field_entries')
+      .selectAll()
+      .where('record_id', '=', id)
+      .orderBy('field_key', 'asc')
+      .orderBy('sort_order', 'asc')
+      .execute(),
+    db
+      .selectFrom('record_connections')
+      .selectAll()
+      .where('record_id', '=', id)
+      .orderBy('field_key', 'asc')
+      .orderBy('sort_order', 'asc')
+      .execute()
+  ])
+
+  const typeMeta = typeRow.meta as Record<string, unknown>
+  const detail = buildRecordDetailPayload(
+    fieldRows,
+    data,
+    { field_entries: fieldEntries, connections },
+    typeMeta
+  )
 
   return {
     record: {
